@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-function Paste() {
+function Paste({ uploaded }) {
   const [emailText, setEmailText] = useState("");
-  const [contextText, setContextText] = useState(""); // optional for future use
+  const [contextText, setContextText] = useState("");
   const [tone, setTone] = useState("professional");
-  const [length, setLength] = useState("short"); // for future backend support
-  const [intent, setIntent] = useState("Accept"); // optional
+  const [length, setLength] = useState("short");
+  const [intent, setIntent] = useState("Accept");
   const [generatedReply, setGeneratedReply] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -15,10 +15,12 @@ function Paste() {
       alert("Please paste an email first.");
       return;
     }
+
     setLoading(true);
     setError("");
+
     try {
-      const response = await fetch("http://localhost:8000/generate", {
+      const response = await fetch("https://replygen-1.onrender.com/generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -35,8 +37,7 @@ function Paste() {
 
       const data = await response.json();
 
-      // Get only the selected tone
-      const replyForTone = data.replies[tone.toLowerCase()];
+      const replyForTone = data.replies[tone];
       setGeneratedReply(replyForTone || "No reply generated");
     } catch (err) {
       console.error(err);
@@ -45,10 +46,16 @@ function Paste() {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    if (uploaded) {
+      setEmailText("Your document content will appear here...");
+    }
+  }, [uploaded]);
 
   return (
-    <div className="paste">
+    <div className="paste" id="paste">
       <h1>Paste your email here</h1>
+
       <textarea
         className="t2"
         placeholder="Paste your email here..."
@@ -57,13 +64,12 @@ function Paste() {
       ></textarea>
 
       <p className="q">Quick option</p>
+
       <div className="dropdown-container">
         <select value={tone} onChange={(e) => setTone(e.target.value)}>
           <option value="professional">Professional</option>
           <option value="casual">Casual</option>
           <option value="friendly">Friendly</option>
-          <option value="formal">Formal</option>
-          <option value="assertive">Assertive</option>
         </select>
 
         <select value={length} onChange={(e) => setLength(e.target.value)}>
@@ -90,13 +96,10 @@ function Paste() {
 
       <div className="box1">
         <h2>Generate reply</h2>
+
         <textarea
           className="t1"
-          placeholder="Hi [Name],
-Thank you for your email. I appreciate you reaching out regarding...
-I’d be happy to move forward with this...
-Best regards,
-[Your Name]"
+          placeholder="Generated reply will appear here..."
           value={generatedReply}
           readOnly
         ></textarea>

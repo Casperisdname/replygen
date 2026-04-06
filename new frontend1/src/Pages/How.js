@@ -1,11 +1,8 @@
 import star1 from "../Images/Star1.png";
 
-
-
-
 function How() {
   return (
-    <div className="how">
+    <div className="how" id="how">
       <div className="howHeading">How it works</div>
       <div className="howList">
         <div className="hl">

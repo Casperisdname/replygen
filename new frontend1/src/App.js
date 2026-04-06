@@ -5,12 +5,18 @@ import Paste from "./Pages/Paste";
 import How from "./Pages/How";
 import Footer from "./Pages/Footer";
 function App() {
+
+  const [uploaded, setUploaded] = useState(false);
+
+  const handleUploadClick = () => {
+    setUploaded(true); // this tells Paste to prefill textarea
+  };
   return (
     <div className="App">
       <div className="main1">
-        <Navbar />
+        <Navbar onUploadClick={handleUploadClick}/>
         <Main />
-        <Paste />
+        <Paste uploaded={uploaded}/>
         <How />
       </div>
       <Footer />
